@@ -2,11 +2,7 @@ const host = 'http://api.wisey.app';
 const version = 'api/v1';
 
 class Utils {
-    token;
-
-    constructor() {
-        this.reciveToken();
-    }
+    token = null;
 
     async getToken() {
         try {
@@ -17,6 +13,7 @@ class Utils {
                         'Content-Type': 'application/json'
                     }
                 }).then(response => response.json());
+            this.token = token;
             return token;
         } catch (error) {
             console.error('Error fetching token:', error);
@@ -24,16 +21,12 @@ class Utils {
         }
     }
 
-    async reciveToken() {
-        if (!this.token) {
-            this.token = await this.getToken();
-        }
-    }
-
     async reciveCourses() {
-        await this.reciveToken();
         if (!this.token) {
-            return;
+            await this.getToken();
+        }
+        if (!this.token) {
+            throw new Error('Failed to get token');
         }
         try {
             const { courses } = await fetch(`${host}/${version}/core/preview-courses`,
@@ -46,35 +39,31 @@ class Utils {
                 }).then(response => response.json());
             return courses;
         } catch (error) {
-            //console.error('Error fetching courses:', error);
-            return null;
+            console.error('Error fetching courses:', error);
+            throw new Error('Failed to fetch courses');
         }
     }
 
-    async reciveCourse() {
+    async reciveCourse(courseId) {
+        if (!this.token) {
+            await this.getToken();
+        }
         try {
             const course = await fetch(`${host}/${version}/core/preview-courses/${courseId}`,
                 {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + token
+                        'Authorization': 'Bearer ' + this.token
                     }
                 }).then(response => response.json());
     
             return course;
         } catch (error) {
             console.error('Error fetching course:', error);
-            return null;
+            throw new Error('Failed to fetch course');
         }
     }
-
-    sum(n1, n2) {
-    
-            return n1 + n2;
-        
-    }
-    
 }
 
-exports = { Utils }
+exports = { Utils };

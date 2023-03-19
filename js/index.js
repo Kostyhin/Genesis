@@ -1,18 +1,18 @@
-var courses;
-
 const coursesPerPage = 10;
 let currentPage = 1;
 
 async function renderCourses() {
-    utils = new Utils();
-    courses = await utils.reciveCourses();
+    const utils = new Utils();
+    const courses = await utils.reciveCourses();
     const totalPages = Math.ceil(courses.length / coursesPerPage);
     const startIndex = (currentPage - 1) * coursesPerPage;
     const endIndex = Math.min(startIndex + coursesPerPage, courses.length);
 
-    const coursesList = document.getElementById('courses-list'); 
+    const coursesList = document.querySelector('#courses-list');
     coursesList.classList.add('course-grid');
-    coursesList.innerHTML = '';
+
+    const fragment = document.createDocumentFragment();
+
     courses.slice(startIndex, endIndex).forEach(course => {
         const preview = document.createElement('preview-course');
         preview.token = utils.token;
@@ -23,13 +23,16 @@ async function renderCourses() {
         preview.lessons = course.lessonsCount;
         preview.video = course.meta.courseVideoPreview.link;
         preview.image = course.previewImageLink;
-        coursesList.appendChild(preview);
-    })
+        fragment.appendChild(preview);
+    });
 
-    renderPagination(totalPages);
+    coursesList.innerHTML = '';
+    coursesList.appendChild(fragment);
+
+    renderPagination(totalPages, coursesList);
 }
 
-async function renderPagination(totalPages) {
+function renderPagination(totalPages, coursesList) {
     const pagination = document.createElement('div');
     pagination.classList.add('pagination');
 
@@ -47,7 +50,6 @@ async function renderPagination(totalPages) {
         pagination.appendChild(pageButton);
     }
 
-    const coursesList = document.getElementById('courses-list');
     coursesList.appendChild(pagination);
 }
 

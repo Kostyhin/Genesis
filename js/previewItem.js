@@ -1,9 +1,15 @@
 class PreviewItem extends HTMLElement {
 
   static observedAttributes = ['id', 'title', 'rating', 'skills', 'lessons', 'video', 'image', 'token'];
+  shadowRoot;
+  Hls;
+
   constructor() {
     super();
     this.setDefaultAttributes();
+    this.shadowRoot = this.attachShadow({ mode: "open" });
+    this.shadowRoot.innerHTML = `<video id="video-player" controls></video>`;
+    this.hlsScriptLoaded = false;
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -20,17 +26,27 @@ class PreviewItem extends HTMLElement {
   }
 
   async connectedCallback() {
-    this.innerHTML = '';
-    const shadowRoot = this.attachShadow({ mode: "open" });
-
-    const cssModule = await import('../css/courseItem.css', {
+    this.shadowRoot.innerHTML = '';
+    //await import('https://cdn.jsdelivr.net/npm/hls.js@latest');
+    /*if (!this.hlsScriptLoaded) {
+      const hlsScript = document.createElement('script');
+      hlsScript.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
+      document.head.appendChild(hlsScript);
+      hlsScript.onload = () => {        
+        const Hls = window.Hls;
+        if (Hls != undefined && Hls.isSupported()) {
+          this.hlsScriptLoaded = true;
+        } else {
+          console.error('HLS not supported');
+          return;
+        };
+      };
+    }*/
+    const cssModule = await import('../css/style.css', {
       assert: { type: 'css' }
     });
-    shadowRoot.adoptedStyleSheets = [cssModule.default];
-    
-    await import('https://cdn.jsdelivr.net/npm/hls.js@latest');
-
-    shadowRoot.appendChild(this.getMainElement());    
+    this.shadowRoot.adoptedStyleSheets = [cssModule.default];
+    this.shadowRoot.appendChild(this.getMainElement());
   }
 
   setDefaultAttributes() {
@@ -106,14 +122,14 @@ class PreviewItem extends HTMLElement {
     return wrapper;
   }
 
-  getLeftPart(){
+  getLeftPart() {
     const leftDiv = document.createElement('div');
     leftDiv.classList.add('item-video');
     leftDiv.appendChild(this.getVideo());
     return leftDiv;
   }
 
-  getRightPart(){
+  getRightPart() {
     const rightDiv = document.createElement('div');
     rightDiv.classList.add('item-description');
     rightDiv.appendChild(this.getLessonCount());
@@ -125,7 +141,7 @@ class PreviewItem extends HTMLElement {
   getTitle() {
     const title = document.createElement('h3');
     const link = document.createElement('a');
-    link.href = 'courseItem.html?token=' + this._token + '&id=' + this._id;
+    link.href = `courseItem.html?token=${this._token}&id=${this._id}`;
     link.textContent = this._title;
     title.appendChild(link);
     title.classList.add('item-title');
@@ -153,7 +169,7 @@ class PreviewItem extends HTMLElement {
     skills.appendChild(title);
     const list = document.createElement('ul');
     this._skills.forEach(skill => {
-      const item = document.createElement('li');   
+      const item = document.createElement('li');
       item.textContent = skill;
       list.appendChild(item);
     });
@@ -164,21 +180,17 @@ class PreviewItem extends HTMLElement {
 
   getVideo() {
     const video = document.createElement('video');
-    var videoSrc = this._videoLink;
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/hls.js@latest';
-    script.onload = () => {
-      if (Hls.isSupported()) {
-        var hls = new Hls();
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-      }
+   
+    if (this.hlsScriptLoaded) {
+      var hls = new Hls();
+      hls.loadSource(this._videoLink);
+      hls.attachMedia(video);
+    } else {
+      video.src = './video.mp4';
+      console.error('HLS not supported');
     };
-    document.head.appendChild(script);
 
-    video.poster = this._previewImageLink + '/cover.webp';
+    video.poster = `${this._previewImageLink}/cover.webp`;
     video.preload = "none";
     video.controls = false;
     video.muted = true;

@@ -4,8 +4,6 @@ var token;
 var courseId;
 var course;
 
-let pipWindow;
-
 function getAllUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     token = urlParams.get('token');
@@ -16,16 +14,15 @@ function getAllUrlParams() {
 
 async function renderCourse() {
     utils = new Utils();
-    course = await utils.reciveCourse();
+    course = await utils.reciveCourse(courseId);
     lessons = course.lessons;
 
     const video = document.getElementById('video');
     video.poster = course.previewImageLink + '/cover.webp';
-    video.src = course.meta.courseVideoPreview.link;;
+    video.src = course.meta.courseVideoPreview.link;
     video.preload = "none";
 
     const lessonsList = document.getElementById('lessons-list');
-    const notSupported = document.getElementById('not-supported');
     const pipButton = document.getElementById('pip-button');
     lessonsList.innerHTML = '';
     lessons.forEach(lesson => {
@@ -54,22 +51,19 @@ async function renderCourse() {
                 if (isSuported) {
                     var hls = new Hls();
                     hls.loadSource(videoSrc);
-                    hls.attachMedia(video);
-                    notSupported.style.visibility = 'hidden';
-                    pipButton.style.visibility = 'visible';
+                    hls.attachMedia(video);                   
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                     video.src = videoSrc;
-                    notSupported.style.visibility = 'hidden';
-                    pipButton.style.visibility = 'visible';
                 } else {
-                    notSupported.style.visibility = 'visible';
-                    pipButton.style.visibility = 'hidden';
+                    video.src = './video.mp4';
                 }
               
                 video.poster = obj.previewImageLink + '/' + obj.order + '.webp';
                 video.preload = 'none';
                 video.controls = true;
                 video.muted = false;
+
+                pipButton.style.visibility = 'visible';
             }
         } else {
             lessonElement.classList.add('deactive-lesson');
@@ -85,7 +79,9 @@ async function renderCourse() {
 
 function requestPictureInPicture() {
     if (document.pictureInPictureEnabled && video !== document.pictureInPictureElement) {
-        video.requestPictureInPicture();
+        try{
+            video.requestPictureInPicture();
+        } catch{}
     } else {
         document.exitPictureInPicture();
     }

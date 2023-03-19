@@ -3,89 +3,97 @@
     padding: 5px 15px;
     border: none;
     background-color: aqua;
-    width: fit-content ;
+    width: fit-content;
     max-width: 30vw;
     cursor: pointer;
 }
+
 .deactive-lesson {
     color: red;
     cursor: progress;
 }
-.course{
+
+.course {
     padding: 0 5%;
     display: flex;
     flex-wrap: wrap;
 }
-video{
+
+video {
     width: 80%;
 }
-#not-supported{
+
+
+#pip-button {
     visibility: hidden;
 }
-#pip-button{
-    visibility: hidden;
-}
-.video-container{
+
+.video-container {
     width: 60%;
     text-align: center;
 }
-#lessons-list{
+
+#lessons-list {
     width: 40%;
 }
-.lessons-count{
+
+.lessons-count {
     width: 50%;
     text-align: left;
 }
-.rating{
+
+.rating {
     width: 50%;
     text-align: right;
 }
-.skills{
+
+.skills {
     width: 100%;
 }
-.item-title{
+
+.item-title {
     width: 100%;
     text-align: center;
 }
-.item-video{
+
+.item-video {
     width: 60%;
     vertical-align: middle;
 }
-.item-description{
+
+.item-description {
     width: 40%;
     display: flex;
     flex-wrap: wrap;
 }
 
-li {    
-    width: fit-content ;
+li {
+    width: fit-content;
 }
 
 li p:hover {
     opacity: 0.8;
 }
 
-#lessons-list{
-
-}
+#lessons-list {}
 
 @media screen and (max-width: 400px) {
 
-    .course{
+    .course {
         display: inline;
         flex-wrap: nowrap;
     }
 
-    #lessons-list{
+    #lessons-list {
         width: 100%;
     }
 
-    .video-container{
+    .video-container {
         width: 100%;
     }
 
     .lesson {
-        width: fit-content ;
+        width: fit-content;
         max-width: 90%;
     }
 
