@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Courses</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">
+    <link rel="stylesheet" href="./css/courseItem.css">
+    <script src="./js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+
+<body>
+
+    <div class="course">
+    
+        <ol id="lessons-list"></ol>
+
+        <div class="video-container">
+            <h2 id="videoTitle"></h2>
+            <video id="video"></video>
+            <p id="not-supported">Video not supported</p>
+            <button id="pip-button" onclick="requestPictureInPicture()">Toggle Picture-in-Picture</button>
+        </div>
+    </div>
+
+    <script src="./js/courseItem.js"></script>
+
+</body>
+
+</html>
