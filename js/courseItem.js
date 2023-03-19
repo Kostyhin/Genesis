@@ -8,8 +8,6 @@ function getAllUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     token = urlParams.get('token');
     courseId = urlParams.get('id');
-    console.log(token);
-    console.log(courseId);
 }
 
 async function renderCourse() {
@@ -58,7 +56,7 @@ async function renderCourse() {
                     video.src = './video.mp4';
                 }
               
-                video.poster = obj.previewImageLink + '/' + obj.order + '.webp';
+                video.poster = `${obj.previewImageLink}/lesson-${obj.order}.webp`;
                 video.preload = 'none';
                 video.controls = true;
                 video.muted = false;
